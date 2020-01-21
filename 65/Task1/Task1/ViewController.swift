@@ -40,7 +40,19 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     func dowloadImage(withURL url:URL,forCell cell: imageTableViewCell){
-        cell.configure(url: url)
+        cell.indicator.startAnimating()
+        DispatchQueue.global(qos: .userInitiated).async {
+            var image:UIImage?
+            if let data = try? Data (contentsOf: url){
+                image = UIImage (data: data)
+            } else {
+                image = UIImage(named: "errorPicture")
+            }
+            DispatchQueue.main.async {
+                cell.photoImageView.image = image
+                cell.indicator.stopAnimating()
+            }
+        }
     }
     
 }
